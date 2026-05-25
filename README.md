@@ -94,36 +94,4 @@ We are preparing a clean and reproducible release. The paper, data, checkpoints,
 | Paper | Full paper and technical details | Coming soon | To be released |
 | Code | Inference, training, and evaluation scripts | In progress | To be released |
 | VecMap-Bench | Benchmark data for unified vector mapping | In progress | To be released |
-| SVL Annotations | Structured Vector Language annotations | In progress | To be released |
 | Model Weights | Pretrained and fine-tuned VecLang checkpoints | In progress | To be released |
-| Visualization Examples | Qualitative results and demo samples | Partially available | Updating |
-| Documentation | Usage instructions and data format description | In progress | Updating |
-
-## Todo
-
-- [ ] Release the paper.
-- [ ] Release the full VecLang codebase.
-- [ ] Release VecMap-Bench and SVL annotations.
-- [ ] Release pretrained and fine-tuned model weights.
-- [ ] Provide inference scripts for single-image and large-scale vector mapping.
-- [ ] Provide training and post-training scripts.
-- [ ] Provide evaluation scripts for polygonal objects and road networks.
-- [ ] Add detailed examples for custom data conversion to SVL.
-
-## Repository Structure
-
-```text
-VecLang/
-├── assets/                     # Figures and visualization results
-│   ├── teaser.png
-│   ├── method_overview.png
-│   └── results/
-│       ├── single_class_results.png
-│       ├── multi_class_results.png
-│       └── large_scale_results.png
-├── configs/                    # Configuration files
-├── data/                       # Data preparation scripts
-├── scripts/                    # Training, inference, and evaluation scripts
-├── veclang/                    # Core implementation
-├── README.md
-└── LICENSE
