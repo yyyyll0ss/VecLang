@@ -106,24 +106,6 @@ git clone https://github.com/yyyyll0ss/VecLang.git
 cd VecLang
 ```
 
-## Structured Vector Language
-
-VecLang represents vector maps with a GeoJSON-like structured language. A polygonal object can be represented as:
-
-```json
-[
-  {
-    "type": "Feature",
-    "geometry": {
-      "type": "Polygon",
-      "coordinates": [x1, y1, x2, y2, "...", xn, yn]
-    },
-    "properties": {
-      "class": "Building"
-    }
-  }
-]
-```
 
 For road networks, SVL can further encode line geometry and topological relations, enabling structured and executable vector-map generation.
 
