@@ -1,7 +1,7 @@
 ﻿# VecLang: Vector Map as Language
 
 <p align="center">
-  <b>A Unified Vision-Language Framework for Remote Sensing Vector Mapping</b>
+  <b>Vector Map as Language: Toward Unified Remote Sensing Vector Mapping</b>
 </p>
 
 <p align="center">
