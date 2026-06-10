@@ -134,11 +134,12 @@ For road networks, SVL can further encode line geometry and topological relation
 If you find this project useful, please consider citing our work:
 
 ```bibtex
-@article{veclang2026,
-  title={VecLang: Vector Map as Language for Unified Remote Sensing Vector Mapping},
-  author={},
-  journal={},
-  year={2026}
+@article{yan2026vectormaplanguageunified,
+  title={Vector Map as Language: Toward Unified Remote Sensing Vector Mapping},
+  author={Yan, Yinglong and Yang, Yunkai and Wang, Haoyi and Fu, Wei and Wu, Linshan and Pan, Honghu and Xia, Shaobo and Zhang, Shanghang and Chen, Hao and Fang, Leyuan},
+  journal={arXiv preprint arXiv:2606.10701},
+  year={2026},
+  url={https://arxiv.org/abs/2606.10701}
 }
 ```
 
