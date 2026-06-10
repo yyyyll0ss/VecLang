@@ -76,10 +76,10 @@ VecLang can also generalize to high-resolution scenes outside the benchmark. The
 
 ## Todo
 
-- [x] Paper
-- [ ] Code
-- [ ] Weight
-- [ ] Dataset
+- [x] Paper: [Vector Map as Language: Toward Unified Remote Sensing Vector Mapping](https://arxiv.org/abs/2606.10701)
+- [ ] Code: [VecLang codebase]()
+- [ ] Weights: [VecLang model weights]()
+- [ ] Dataset: [VecMap-Bench dataset]()
 
 ## Quick Start
 
