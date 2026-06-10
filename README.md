@@ -7,7 +7,6 @@
 <p align="center">
   <a href="#overview">Overview</a> |
   <a href="#results">Results</a> |
-  <a href="#release-plan">Release Plan</a> |
   <a href="#todo">Todo</a> |
   <a href="#citation">Citation</a>
 </p>
@@ -75,47 +74,12 @@ VecLang can also generalize to high-resolution scenes outside the benchmark. The
   <b>Zoomed-in views of large-scale vectorization results.</b>
 </p>
 
-## Release Plan
-
-We are preparing a clean and reproducible release. The paper, data, checkpoints, and scripts will be released progressively.
-
-| Component | Description | Status |
-| --- | --- | --- |
-| Paper | Full paper and technical details | Coming soon |
-| Code | Training, inference, and evaluation scripts | In progress |
-| VecMap-Bench | Benchmark data for unified vector mapping | In progress |
-| SVL Annotations | Structured Vector Language annotations | In progress |
-| Model Weights | Pretrained and fine-tuned VecLang checkpoints | In progress |
-| Visualization Results | Qualitative examples and demo figures | Updating |
-| Documentation | Usage instructions and data format description | Updating |
-
 ## Todo
 
-- [ ] Release the paper.
-- [ ] Release the full VecLang codebase.
-- [ ] Release VecMap-Bench and SVL annotations.
-- [ ] Release pretrained and fine-tuned model weights.
-- [ ] Provide inference scripts for single-image and large-scale vector mapping.
-- [ ] Provide training and post-training scripts.
-- [ ] Provide evaluation scripts for polygonal objects and road networks.
-- [ ] Add examples for custom data conversion to SVL.
-
-## Repository Structure
-
-```text
-VecLang/
-├── assets/
-│   └── results/
-│       ├── single_class_viz.pdf
-│       ├── single_class_viz.png
-│       ├── multi_class_viz.pdf
-│       ├── multi_class_viz.png
-│       ├── WHU_test04_multiclass_high0p2_low0p1_tiles3x2_water_all_low_scale0p1.jpg
-│       ├── WHU_test04_multiclass_high0p2_low0p1_tiles3x2_water_all_r01_c02.jpg
-│       └── WHU_test04_multiclass_high0p2_low0p1_tiles3x2_water_all_r02_c02.jpg
-├── README.md
-└── LICENSE
-```
+- [x] Paper
+- [ ] Code
+- [ ] Weight
+- [ ] Dataset
 
 ## Quick Start
 
