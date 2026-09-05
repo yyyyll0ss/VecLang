@@ -1,4 +1,4 @@
-﻿# VecLang: Vector Map as Language
+# VecLang: Vector Map as Language
 
 <p align="center">
   <b>Vector Map as Language: Toward Unified Remote Sensing Vector Mapping</b>
@@ -6,8 +6,10 @@
 
 <p align="center">
   <a href="#overview">Overview</a> |
+  <a href="#demo">Demo</a> |
   <a href="#results">Results</a> |
-  <a href="#todo">Todo</a> |
+  <a href="#todo">Downloads</a> |
+  <a href="#quick-start">Quick Start</a> |
   <a href="#citation">Citation</a>
 </p>
 
@@ -25,6 +27,21 @@ VecLang supports both closed-structure objects, such as **buildings** and **wate
 - **Hierarchical Optimization:** Improves syntactic validity, content consistency, and execution fidelity.
 - **Broad Evaluation:** Supports single-class, multiclass, cross-dataset, open-vocabulary, and large-scale vector mapping settings.
 
+## Demo
+
+<p align="center">
+  <a href="demo/">
+    <img src="demo/artifacts/desktop-preview.png" alt="VecLang demo: remote sensing image, structured vector language, and interactive vector map" width="95%">
+  </a>
+</p>
+
+<p align="center">
+  <a href="demo/"><b>Explore the demo</b></a> |
+  <a href="https://github.com/yyyyll0ss/VecLang/raw/refs/heads/main/demo/VecLang-Standalone.html">Download offline demo</a>
+</p>
+
+Explore 20 scenes with linked image–SVL–map views, prediction/ground-truth overlays, editable vectors, and GeoJSON export. The demo uses precomputed predictions; download the HTML file and open it locally without a GPU or server.
+
 ## Results
 
 ### Single-Class Vector Mapping
@@ -37,7 +54,6 @@ VecLang generates regular building outlines, compact waterbody polygons, and con
 
 <p align="center">
   <b>Single-class vector mapping visualization.</b>
-  <a href="assets/results/single_class_viz.pdf">PDF version</a>
 </p>
 
 ### Multi-Class Vector Mapping
@@ -50,7 +66,6 @@ VecLang jointly predicts buildings, roads, and water bodies in the same scene, p
 
 <p align="center">
   <b>Multi-class vector mapping visualization.</b>
-  <a href="assets/results/multi_class_viz.pdf">PDF version</a>
 </p>
 
 ### Large-Scale Vector Mapping
@@ -77,21 +92,32 @@ VecLang can also generalize to high-resolution scenes outside the benchmark. The
 ## Todo
 
 - [x] Paper: [Vector Map as Language: Toward Unified Remote Sensing Vector Mapping](https://arxiv.org/abs/2606.10701)
-- [ ] Code: [VecLang codebase]()
-- [ ] Weights: [VecLang model weights]()
-- [ ] Dataset: [VecMap-Bench dataset]()
+- [x] Code: [Inference](inference/) · [Evaluation tools](eval_tools/) · [Demo](demo/)
+- [x] Weights: [VecLang-4B on Hugging Face](https://huggingface.co/yyyllll/VecLang-4B)
+- [x] Dataset: [VecLang data on Baidu Netdisk](https://pan.baidu.com/s/1b9clAjJT_YWdQBrTR99MKg?pwd=paqs) · Extraction code: `paqs`
 
 ## Quick Start
 
-The complete environment setup, model checkpoints, and inference scripts will be released soon.
+Use Linux with an NVIDIA GPU for inference. The recorded environment uses Python 3.10, PyTorch 2.4.0 (CUDA 12.1), Transformers 4.57.1, and LLaMA-Factory 0.9.4.dev0. Follow [environment setup](ENVIRONMENT.md) first.
 
 ```bash
 git clone https://github.com/yyyyll0ss/VecLang.git
 cd VecLang
+
+# Extract the downloaded test data into dataset/test/ (see the guide below).
+# Run from the environment containing LLaMA-Factory.
+bash inference/run_inference.sh --list-datasets
+bash inference/run_inference.sh --task all --dry-run
+
+# A small inference run; weights are loaded from yyyllll/VecLang-4B.
+bash inference/run_inference.sh \
+  --task object_detection --datasets WHU_test_patches_512 \
+  --max-samples 9 --gpus 0
 ```
 
+For the full test run, use `bash inference/run_inference.sh --task all --gpus 0,1,2,3`, adjusting GPU IDs to your machine. Predictions are saved outside the repository in `../VecLang_outputs/<timestamp>/<task>/predictions_by_dataset/`.
 
-For road networks, SVL can further encode line geometry and topological relations, enabling structured and executable vector-map generation.
+[Reproduction guide](REPRODUCE.md) · [Dependencies](ENVIRONMENT.md) · [Inference options](inference/README.md) · [Evaluation](eval_tools/README.md)
 
 ## Citation
 
@@ -110,5 +136,3 @@ If you find this project useful, please consider citing our work:
 ## Acknowledgement
 
 We thank the open-source community and prior works on remote sensing vector mapping, vision-language models, and structured map generation.
-
-

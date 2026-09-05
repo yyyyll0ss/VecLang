@@ -1,0 +1,16 @@
+{
+  "name": "veclang-interactive-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Offline academic showcase of real VecLang predictions",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs dist",
+    "test": "node tests/geometry.test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

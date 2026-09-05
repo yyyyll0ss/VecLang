@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.p
+*.pickle
+*.exe
+.gocache/
+.venv/
+results/
+score/
+viz/
+viz_before/
+viz_diff/
+viz_compare/
+outputs/

@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+/dataset/
+/model_weights/
+/VecLang_outputs/
+/inference/runs/
+/inference/results/
+/demo/dist/
+/demo/artifacts/*
+!/demo/artifacts/desktop-preview.png
+/docs/local-archive-notes.md

@@ -1,0 +1,8 @@
+numpy>=1.23
+opencv-python>=4.6
+scipy>=1.9
+tqdm>=4.64
+pycocotools>=2.0.6
+rtree>=1.0
+hopcroftkarp>=1.2
+shapely>=1.8,<3

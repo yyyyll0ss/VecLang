@@ -1,0 +1,52 @@
+# Resolved relative to this config file, so cloned repositories remain portable.
+dataset_root: ../../dataset/test
+
+tasks:
+  object_detection:
+    config: object_detection.yaml
+    media_dir: object_detection
+    datasets:
+      - name: WHU_test_patches_512
+        manifest: object_detection/WHU_test_patches_512.json
+        records: 8880
+      - name: WB_test_patches_512
+        manifest: object_detection/WB_test_patches_512.json
+        records: 3262
+      - name: IRSAMap_test_patches_512
+        manifest: object_detection/IRSAMap_test_patches_512.json
+        records: 984
+
+  attributes_generation:
+    config: attributes_generation.yaml
+    media_dir: attributes_generation
+    datasets:
+      - name: WHU_building_instance_test_0129
+        manifest: attributes_generation/WHU_building_instance_test_0129.json
+        records: 77440
+      - name: Cityscales_road_instance_test_0301
+        manifest: attributes_generation/Cityscales_road_instance_test_0301.json
+        records: 25947
+      - name: WB_WaterBody_instance_test_0323
+        manifest: attributes_generation/WB_WaterBody_instance_test_0323.json
+        records: 5945
+      - name: IRSAMap_Building_instance_test_sft
+        manifest: attributes_generation/IRSAMap_Building_instance_test_sft.json
+        records: 28958
+      - name: IRSAMap_Road_instance_test_sft
+        manifest: attributes_generation/IRSAMap_Road_instance_test_sft.json
+        records: 32165
+      - name: IRSAMap_WaterBody_instance_test_sft
+        manifest: attributes_generation/IRSAMap_WaterBody_instance_test_sft.json
+        records: 362
+      - name: SpaceNet_road_instance_test_0301
+        manifest: attributes_generation/SpaceNet_road_instance_test_0301.json
+        records: 13752
+      - name: COCO_4_classes
+        manifest: attributes_generation/COCO_4_classes_sft.json
+        records: 1529
+      - name: iSAID_4_classes
+        manifest: attributes_generation/iSAID_4_classes_sft.json
+        records: 1242
+      - name: crowdai_Building_instance_val_inference_sft
+        manifest: attributes_generation/crowdai_Building_instance_val_inference_sft.json
+        records: 10674

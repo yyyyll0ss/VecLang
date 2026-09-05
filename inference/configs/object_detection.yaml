@@ -1,0 +1,24 @@
+# Base LLaMA-Factory prediction config. Use ../run_inference.py to resolve
+# dataset_dir, media_dir, eval_dataset and a timestamped output_dir.
+model_name_or_path: yyyllll/VecLang-4B
+trust_remote_code: true
+
+stage: sft
+do_predict: true
+predict_with_generate: true
+finetuning_type: lora
+template: qwen3_vl_nothink
+
+cutoff_len: 2300
+max_new_tokens: 2100
+max_samples: 300000
+per_device_eval_batch_size: 2
+preprocessing_num_workers: 16
+
+temperature: 0.95
+top_p: 0.7
+flash_attn: auto
+quantization_method: bnb
+
+ddp_timeout: 180000000
+report_to: none

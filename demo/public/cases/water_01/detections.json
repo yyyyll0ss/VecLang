@@ -1,0 +1,1 @@
+{"prediction":[{"bbox_2d":[0,0,746,496],"label":"WaterBody"},{"bbox_2d":[736,641,998,998],"label":"WaterBody"}],"gt":[{"bbox_2d":[0,0,797,561],"label":"WaterBody"},{"bbox_2d":[732,641,998,998],"label":"WaterBody"},{"bbox_2d":[965,945,998,998],"label":"WaterBody"}],"coordinateScale":1000,"sourceLine":94,"sourceFile":"WB_test_patches_512.jsonl"}
