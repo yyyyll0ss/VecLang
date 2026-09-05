@@ -1,5 +1,7 @@
 # VecLang Interactive Demo
 
+**[在线体验 →](https://yyyyll0ss.github.io/VecLang/)**：点击即可在浏览器中使用，无需下载、安装或 GPU。
+
 GitHub 发布包含源码、20 个展示案例、主页截图与 `VecLang-Standalone.html`。
 下载单文件 HTML 后用浏览器打开即可交互；GitHub 文件预览本身不执行 JavaScript。
 下文中的 `dist/`、ZIP 和验证报告是本地构建产物，不随源码提交；可按构建命令生成。
@@ -186,6 +188,11 @@ python scripts/package_release.py
 道路提取脚本的 `--gt-file` 参数在此传入 `patch_index.json`；该脚本实际使用其中的 images 顺序和大小。索引通过逐行核对 manifest / 推理 label 建立，避免靠文件名字典序猜测匹配。`provenance.json` 保存两份仓库脚本的 SHA256 和实际执行命令；prediction 与 GT 分别记录完整日志。
 
 ## 静态部署
+
+本仓库已配置 [GitHub Actions](../.github/workflows/deploy-demo.yml)：推送 `main` 分支中
+`demo/` 或部署配置的改动后，自动运行几何与案例测试、构建并发布到
+<https://yyyyll0ss.github.io/VecLang/>。也可以在 Actions → Deploy VecLang demo 中手动运行。
+Pages 的发布源设为 **GitHub Actions**；仅发布 `demo/dist/`，无需提交构建目录。
 
 - GitHub Pages：将 `dist/` 内容放在发布分支根目录，或通过 Actions 上传 Pages artifact。构建结果使用内嵌资源，不受仓库子路径影响。
 - Vercel / Cloudflare Pages：项目根目录设为 `VecLang/demo`，构建命令 `npm run build`，输出目录 `dist`。

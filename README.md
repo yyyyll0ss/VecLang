@@ -30,17 +30,18 @@ VecLang supports both closed-structure objects, such as **buildings** and **wate
 ## Demo
 
 <p align="center">
-  <a href="demo/">
+  <a href="https://yyyyll0ss.github.io/VecLang/">
     <img src="demo/artifacts/desktop-preview.png" alt="VecLang demo: remote sensing image, structured vector language, and interactive vector map" width="95%">
   </a>
 </p>
 
 <p align="center">
-  <a href="demo/"><b>Explore the demo</b></a> |
+  <a href="https://yyyyll0ss.github.io/VecLang/"><b>Try the live demo</b></a> |
+  <a href="demo/">Demo source</a> |
   <a href="https://github.com/yyyyll0ss/VecLang/raw/refs/heads/main/demo/VecLang-Standalone.html">Download offline demo</a>
 </p>
 
-Explore 20 scenes with linked image–SVL–map views, prediction/ground-truth overlays, editable vectors, and GeoJSON export. The demo uses precomputed predictions; download the HTML file and open it locally without a GPU or server.
+Explore 20 scenes with linked image–SVL–map views, prediction/ground-truth overlays, editable vectors, and GeoJSON export. Open the live demo directly in your browser—no installation or GPU required. The demo uses precomputed predictions; an offline HTML version is also available.
 
 ## Results
 

@@ -103,6 +103,8 @@ Use the standard detection-list JSON for polygon evaluation, not the companion `
 
 ## 6. Demo
 
+Open the [live demo](https://yyyyll0ss.github.io/VecLang/) to interact immediately in your browser. No installation, account, or GPU is required.
+
 Download [VecLang-Standalone.html](https://github.com/yyyyll0ss/VecLang/raw/refs/heads/main/demo/VecLang-Standalone.html) and open it in a browser. It contains precomputed examples and needs no model or GPU. To run the source version, install Node.js 18+ and use:
 
 ```bash
