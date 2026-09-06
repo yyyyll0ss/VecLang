@@ -1,11 +1,11 @@
-"""Run the two repository road scripts unchanged, in order, on all overlapping candidate patches."""
+"""Run the requested multiclass extraction and junction-stitch scripts on all overlapping patches."""
 import hashlib,json,pickle,subprocess,sys,collections
 from pathlib import Path
 import cv2,numpy as np
 from prepare_cases import ROOT,HERE,DATA,VEC,read,write
-WORK=HERE/'artifacts/road_stitching'
-EXTRACT=ROOT/'VecLang/eval_tools/road/1.extract_road_instance_patch.py'
-STITCH=ROOT/'VecLang/eval_tools/road/2.stitch_coco_polylines.py'
+WORK=HERE/'artifacts/road_stitching_junction'
+EXTRACT=ROOT/'VecLang/eval_tools/multiclass/road/1.extract_road_instance_patch.py'
+STITCH=ROOT/'VecLang/eval_tools/multiclass/road/2.stitch_coco_polylines_junction.py'
 NAME='IRSAMap_Road_instance_test_sft'
 
 def graph_edges(graph):
@@ -53,11 +53,14 @@ def raster(fc,cls,size=1024):
 
 def main():
     WORK.mkdir(parents=True,exist_ok=True)
-    # Stable candidate inventory survives reducing the published gallery to five multi scenes.
-    inventory=WORK/'candidates.json'
-    if not inventory.exists():
-        write(inventory,[m for m in read(HERE/'public/cases/index.json') if m['dataset']=='IRSAMap'])
-    candidates=read(inventory);regions={Path(m['source']['image']).stem for m in candidates}
+    import shutil
+    candidates=[m for m in read(HERE/'public/cases/index.json') if m['dataset']=='IRSAMap']
+    expected=[item['region'] for item in read(HERE/'scripts/selected_scenes.json')]
+    assert [Path(m['source']['image']).stem for m in candidates] == expected
+    write(WORK/'candidates.json',candidates)
+    for m in candidates:
+        shutil.copytree(HERE/'public/cases'/m['id'],WORK/'candidate_cases'/m['id'],dirs_exist_ok=True)
+    regions=set(expected)
     manifest=read(DATA/(NAME+'.json'));images=[];sources=[];prediction=[];truth=[]
     with (VEC/(NAME+'.jsonl')).open() as stream:
         for i,line in enumerate(stream):
@@ -76,7 +79,7 @@ def main():
         inp=WORK/(source+'.jsonl');inp.write_text(''.join(json.dumps(r)+'\n' for r in rows))
         cmd=[sys.executable,str(EXTRACT),'--inference-file',str(inp),'--gt-file',str(WORK/'patch_index.json'),'--output-file',str(WORK/(source+'.json'))]
         run(cmd,WORK/(source+'-extract.log'));commands.append(cmd)
-        cmd=[sys.executable,str(STITCH),'--input_json',str(WORK/(source+'_full.json')),'--output_dir',str(WORK/source),'--crop_size_orig','128','--patch_size_model','256','--stride','64']
+        cmd=[sys.executable,str(STITCH),'--input_json',str(WORK/(source+'_full.json')),'--output_dir',str(WORK/source),'--crop_size_orig','128','--patch_size_model','256','--stride','64','--junction_json',str(WORK/(source+'_junctions.json')),'--preset','balanced','--enable_viz','0']
         run(cmd,WORK/(source+'-stitch.log'));commands.append(cmd)
         for region in regions:assert (WORK/source/'graph'/(region+'.p')).exists()
     ranked=[]
@@ -85,13 +88,13 @@ def main():
         pred,adj=graph_feature(WORK/'prediction/graph'/(region+'.p'));gt,_=graph_feature(WORK/'gt/graph'/(region+'.p'))
         pm=raster([pred],'road');gm=raster([gt],'road');kernel=np.ones((7,7),np.uint8)
         precision=float((pm*cv2.dilate(gm,kernel)).sum()/max(1,pm.sum()));recall=float((gm*cv2.dilate(pm,kernel)).sum()/max(1,gm.sum()));f1=2*precision*recall/max(1e-9,precision+recall)
-        base=(HERE/'public/cases' if len([m for m in read(HERE/'public/cases/index.json') if m['dataset']=='IRSAMap'])==10 else WORK/'candidate_cases')/meta['id'];pf=read(base/'prediction.geojson')['features'];gf=read(base/'gt.geojson')['features'];ious={}
+        base=WORK/'candidate_cases'/meta['id'];pf=read(base/'prediction.geojson')['features'];gf=read(base/'gt.geojson')['features'];ious={}
         for cls in ['building','water']:
             p=raster(pf,cls);g=raster(gf,cls);ious[cls]=float((p&g).sum()/max(1,(p|g).sum()))
         score=.6*f1+.25*ious['building']+.15*ious['water']
         ranked.append({'id':meta['id'],'region':region,'roadPrecision3px':precision,'roadRecall3px':recall,'roadF1_3px':f1,'buildingIoU':ious['building'],'waterIoU':ious['water'],'selectionScore':score,'graphNodes':len(adj),'graphEdges':len(graph_edges(pickle.load(open(WORK/'prediction/graph'/(region+'.p'),'rb')))),'stitchedPolylines':len(pred['geometry']['coordinates']),'junctions':len(pred['junctions'])})
     ranked.sort(key=lambda r:-r['selectionScore'])
     write(WORK/'ranking.json',{'note':'Internal case selection, not a benchmark. Roads compared to the independently stitched full manifest labels with a 3-pixel raster tolerance; polygon IoU compares existing evaluation labels. Visual review is also required.','candidates':ranked})
-    write(WORK/'provenance.json',{'sourceFile':NAME+'.jsonl','overlappingPatches':len(images),'regionIds':sorted(regions),'scripts':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in [EXTRACT,STITCH]],'commands':[[str(Path(v).relative_to(ROOT)) if str(v).startswith(str(ROOT)+'/') else v for v in cmd] for cmd in commands],'parameters':{'crop_size_orig':128,'patch_size_model':256,'stride':64,'remaining':'Unmodified script CLI defaults'},'gt':'Full source manifest labels independently passed through the same extraction and stitching pipeline; not original full-region GIS ground truth.'})
+    write(WORK/'provenance.json',{'sourceFile':NAME+'.jsonl','overlappingPatches':len(images),'regionIds':sorted(regions),'scripts':[{'path':str(p.relative_to(ROOT)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in [EXTRACT,STITCH]],'commands':[[str(Path(v).relative_to(ROOT)) if str(v).startswith(str(ROOT)+'/') else v for v in cmd] for cmd in commands],'parameters':{'crop_size_orig':128,'patch_size_model':256,'stride':64,'preset':'balanced','junction_json':'Corresponding extracted prediction/GT junctions','remaining':'Unmodified script CLI defaults'},'gt':'Full source manifest labels independently passed through the same extraction and stitching pipeline; not original full-region GIS ground truth.'})
     print(json.dumps(ranked,indent=2),flush=True)
 if __name__=='__main__':main()

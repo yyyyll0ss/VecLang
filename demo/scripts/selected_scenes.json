@@ -1,0 +1,22 @@
+[
+  {
+    "region": "50",
+    "requestedImage": "018_region_50_multiclass.jpg"
+  },
+  {
+    "region": "457",
+    "requestedImage": "127_region_457_multiclass.jpg"
+  },
+  {
+    "region": "41",
+    "requestedImage": "015_region_41_multiclass.jpg"
+  },
+  {
+    "region": "259",
+    "requestedImage": "070_region_259_multiclass.jpg"
+  },
+  {
+    "region": "726",
+    "requestedImage": "195_region_726_multiclass.jpg"
+  }
+]

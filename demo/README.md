@@ -2,10 +2,6 @@
 
 **[在线体验 →](https://yyyyll0ss.github.io/VecLang/)**：点击即可在浏览器中使用，无需下载、安装或 GPU。
 
-GitHub 发布包含源码、20 个展示案例、主页截图与 `VecLang-Standalone.html`。
-下载单文件 HTML 后用浏览器打开即可交互；GitHub 文件预览本身不执行 JavaScript。
-下文中的 `dist/`、ZIP 和验证报告是本地构建产物，不随源码提交；可按构建命令生成。
-
 用于论文展示的离线交互 Demo：**Image ↔ Structured Vector Language ↔ Vector Map**。默认展示 IRSAMap 多类别场景，所有首页案例均来自已有模型推理结果。无需模型权重、GPU、数据库、CDN 或推理服务。
 
 ![Desktop preview](artifacts/desktop-preview.png)
@@ -59,17 +55,17 @@ npm run preview
 
 单类别维持 WHU 建筑 **5** 个、WB 水体 **5** 个、Cityscale 道路 **5** 个；IRSAMap 多类别精选五个，共 **20** 个。三个单类别的 15 个案例文件保持不变。
 
-IRSAMap 道路已按用户指定顺序执行 `1.extract_road_instance_patch.py` → `2.stitch_coco_polylines.py`，输入包括候选场景的**全部重叠道路 patch**，参数为原始裁剪 128、模型 patch 256、stride 64，其余使用脚本 CLI 默认值。页面、SVL、junction 和导出 GeoJSON 使用同一份拼接图。
+IRSAMap 道路已按用户指定顺序执行 `eval_tools/multiclass/road/1.extract_road_instance_patch.py` → `eval_tools/multiclass/road/2.stitch_coco_polylines_junction.py`。输入包括五个场景的**全部重叠道路 patch**，参数为原始裁剪 128、模型 patch 256、stride 64，并把第一步导出的 junction 文件传给第二步，使用 `balanced` preset。页面、SVL、junction 和导出 GeoJSON 使用同一份最终拼接图。
 
-从原有十个候选场景处理后的结果中，结合道路 / 标签对照、建筑水体重叠程度和影像可读性选取五个。内部选例评分不作为论文 benchmark；十个候选的拼接结果、命令、日志、原始 patch 记录和视觉对照均保存在 `artifacts/road_stitching/`。
+五个场景严格采用指定图片的区域 ID，并保持给定顺序，不做评分替换：`018_region_50_multiclass.jpg`、`127_region_457_multiclass.jpg`、`015_region_41_multiclass.jpg`、`070_region_259_multiclass.jpg`、`195_region_726_multiclass.jpg`。拼接图、命令、日志、原始 patch 记录及来源信息保存在 `artifacts/road_stitching_junction/`。
 
 | 案例 | IRSAMap 影像 | 建筑 | 拼接图折线链 | 水体 | 拼接图 junction |
 |---|---|---:|---:|---:|---:|
-| multi_01 | 102.png | 37 | 97 | 5 | 34 |
-| multi_02 | 308.png | 55 | 244 | 2 | 101 |
-| multi_03 | 702.png | 121 | 79 | 1 | 23 |
-| multi_04 | 345.png | 14 | 173 | 6 | 72 |
-| multi_05 | 505.png | 162 | 108 | 8 | 35 |
+| multi_01 | 50.png | 212 | 98 | 0 | 32 |
+| multi_02 | 457.png | 192 | 224 | 2 | 102 |
+| multi_03 | 41.png | 187 | 185 | 2 | 87 |
+| multi_04 | 259.png | 131 | 177 | 2 | 88 |
+| multi_05 | 726.png | 228 | 105 | 0 | 34 |
 
 拼接图折线链在度数不为 2 的节点处分段，不等同于原始 patch polyline 数或独立道路数量。它们保留 `.p` 图的全部非自环无向边；没有额外手工补线。页面取消固定最大宽度，两侧留白为 12–20 px；Gallery 支持数量显示、翻阅和快速跳转。
 
@@ -88,7 +84,7 @@ new_model/Qwen3-VL-SFT-0502/
 - 模型原始坐标是实例 / patch 内归一化的 `[0,1000]`；Map SVL 使用**当前场景影像像素坐标**，原点左上角，x 向右，y 向下。
 - WHU / WB：从原始 COCO 实例 bbox 和仓库 `crop_instance(scale_factor=1.3)` 恢复裁剪范围，采用 `scene_x = crop_x + raw_x × crop_w / 1000`，y 同理。标签按同一变换还原。
 - IRSAMap：COCO 的 `source_image`、`source_feature_index`、patch 偏移用于恢复原图对象 bbox；用原裁剪算法重建输入图像，再与已有 256×256 实例图进行像素校验。四个 512×512 影像 patch 还原为同一 1024×1024 场景。
-- IRSAMap 道路：原始窗口 128×128，模型输入放大为 256×256。将源文件名适配为第二个脚本要求的 `region_<region>_patch_<patch>_<x>_<y>.png`，按原始 manifest 行号构造第一个脚本使用的 COCO images 索引。索引只提供影像信息，不伪装为额外 GT。提取后对全部重叠 patch 进行区域拼接，包含脚本默认的节点合并、端点吸附、边界连接及平行边处理。脚本本身未被修改。
+- IRSAMap 道路：原始窗口 128×128，模型输入放大为 256×256。将源文件名适配为拼接脚本要求的 `region_<region>_patch_<patch>_<x>_<y>.png`，按原始 manifest 行号构造提取脚本使用的 COCO images 索引。索引只提供影像信息，不伪装为额外 GT。提取后把全部重叠 patch 和提取出的 junction 一并交给 junction 拼接脚本，使用 `balanced` preset；两个脚本本身未被修改。
 - 多类页面是**同一场景的各类别离线预测的统一组织与展示**，不声称这些文件来自一次联合解码。
 - 检测与矢量是两次独立评估：检测框可叠加查看，不把它们伪装为已匹配的 detector → vector 级联结果。提供的 Cityscale 结果没有检测任务，因此该案例 Bboxes 不可用。
 - IRSAMap junction 来自拼接区域图中度数 ≥ 3 的节点；连接关系使用精确共享端点，不使用邻近容差来虚构连接。`topology.mode` 为 `stitched-graph`。Cityscale 单类保留原先的 patch 预测 junction 和 2 像素局部 incidence。degree 是分支数；闭合折线链在同一 junction 的两个端点贡献 2 条分支。
@@ -171,7 +167,7 @@ npm run build
 python scripts/package_release.py
 ```
 
-`prepare_cases.py` 默认解析当前仓库相对路径。更换机器数据布局时修改脚本顶部 DATA / VEC / DET。`--prepare-only` 只准备 25 个候选，不用于最终发布；正常运行会继续执行两步道路处理和五场景筛选。最终区域列表在 `apply_stitched_cases.py` 的 `SELECTED` 中，候选快照用于重现选例。
+`prepare_cases.py` 默认解析当前仓库相对路径。更换机器数据布局时修改脚本顶部 DATA / VEC / DET。五个指定区域及顺序保存在 `scripts/selected_scenes.json`；正常运行会重建这五个多类别场景、执行两步道路处理，并与保持不变的 15 个单类别案例共同发布。
 
 仅重跑道路流程而不重建其他类别：
 
@@ -189,10 +185,9 @@ python scripts/package_release.py
 
 ## 静态部署
 
-本仓库已配置 [GitHub Actions](../.github/workflows/deploy-demo.yml)：推送 `main` 分支中
-`demo/` 或部署配置的改动后，自动运行几何与案例测试、构建并发布到
-<https://yyyyll0ss.github.io/VecLang/>。也可以在 Actions → Deploy VecLang demo 中手动运行。
-Pages 的发布源设为 **GitHub Actions**；仅发布 `demo/dist/`，无需提交构建目录。
+本仓库通过 [GitHub Actions](../.github/workflows/deploy-demo.yml) 自动发布到
+<https://yyyyll0ss.github.io/VecLang/>。推送 `main` 分支中的 `demo/` 改动后，
+工作流会先运行测试和构建，再更新在线页面。
 
 - GitHub Pages：将 `dist/` 内容放在发布分支根目录，或通过 Actions 上传 Pages artifact。构建结果使用内嵌资源，不受仓库子路径影响。
 - Vercel / Cloudflare Pages：项目根目录设为 `VecLang/demo`，构建命令 `npm run build`，输出目录 `dist`。

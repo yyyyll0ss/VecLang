@@ -190,8 +190,44 @@ def multicategory():
                     cropped,*box=crop(arr,[*lo,*(hi-lo)],height,width,1.3)
                     reconstructed=cv2.resize(cropped,(256,256));fid=f'{norm}_{inst:03}'
                 original=cv2.imread(str(DATA/path));error=float(np.abs(reconstructed.astype(float)-original.astype(float)).mean())
+                correction = None
+                if error > 3 and cls != 'Road':
+                    # Patch COCO rounds/clips bounds; near integer crop boundaries tiny
+                    # rounding changes can change the sampled pixels. Verify candidates
+                    # against the real model input, never against predicted geometry.
+                    import itertools
+                    original_error = error
+                    for epsilon in (0.001, 0.002, 0.005, 0.01):
+                        for offsets in itertools.product((-epsilon, 0, epsilon), repeat=4):
+                            limits=np.r_[lo,hi]+np.asarray(offsets)
+                            candidate,*candidate_box=crop(arr,[*limits[:2],*(limits[2:]-limits[:2])],height,width,1.3)
+                            if not candidate.size:continue
+                            candidate_error=float(np.abs(cv2.resize(candidate,(256,256)).astype(float)-original.astype(float)).mean())
+                            if candidate_error < error:
+                                error=candidate_error;box=candidate_box
+                                correction={'originalMAE':original_error,'bboxBoundOffsets':list(offsets),'method':'Bound rounding recovery verified against actual model input pixels'}
+                        if error < 0.01:break
+                    if correction:print('Recovered crop rounding',path,error,correction,flush=True)
+                if error > 3 and cls != 'Road':
+                    # Some source polygon bounds are lost when the tiny remainder on
+                    # the next evaluation patch is filtered out. Only expand bounds
+                    # on clipping seams, and require pixel agreement with the input.
+                    choices=[]
+                    for k,value in enumerate(np.r_[lo,hi]):
+                        clipped=abs(value-round(value/512)*512)<0.011
+                        choices.append(np.arange(0,8.01,0.1)*(-1 if k<2 else 1) if clipped else [0])
+                    for offsets in itertools.product(*choices):
+                        limits=np.r_[lo,hi]+np.asarray(offsets)
+                        candidate,*candidate_box=crop(arr,[*limits[:2],*(limits[2:]-limits[:2])],height,width,1.3)
+                        if not candidate.size:continue
+                        candidate_error=float(np.abs(cv2.resize(candidate,(256,256)).astype(float)-original.astype(float)).mean())
+                        if candidate_error < error:
+                            error=candidate_error;box=candidate_box
+                            correction={'originalMAE':original_error,'bboxBoundOffsets':list(offsets),'method':'Clipped source bound recovery verified against actual model input pixels'}
+                        if error < 0.01:break
+                    if correction:print('Recovered clipped bound',path,error,correction,flush=True)
                 if error>3:raise ValueError(f'Crop mismatch: {path}, MAE={error}')
-                checks.append({'image':path,'meanAbsolutePixelError':round(error,6)})
+                checks.append({'image':path,'meanAbsolutePixelError':round(error,6), 'boundRoundingRecovery':correction})
                 try:
                     pf=[transform(r,fid if k==0 else fid+f'_{k}',norm,box) for k,r in enumerate(parsed(row['predict']))]
                     gf=[transform(r,fid if k==0 else fid+f'_{k}',norm,box) for k,r in enumerate(parsed(row['label']))]
@@ -206,43 +242,28 @@ def multicategory():
                 for d in parsed(row[field]):
                     b=d['bbox_2d'];detections[key].append({'label':d['label'],'bbox_2d':[round(x+b[0]*.512,3),round(y+b[1]*.512,3),round(x+b[2]*.512,3),round(y+b[3]*.512,3)]})
             detections['sources'].append({'image':path,'line':i+1,'file':'IRSAMap_test_patches_512.jsonl'})
-        assert {f['properties']['class'] for f in pred}=={'road','building','water'}
+        assert pred, f'No parseable predictions for requested region {region}'
         return emit(f'multi_{index:02}',f'Unified scene {index:02}','IRSAMap',canvas,pred,gt,raw,detections,{'image':region+'.png','vectorResults':VEC.name,'detectionResults':DET.name,'transform':'Polygon crop bounds reconstructed from COCO source_feature_index and bbox using repository crop_instance; verified against actual input images. Road patches restored to original 128 pixels with filename offsets.','composition':'Class-specific offline predictions are assembled in one common scene; not claimed to be a single joint decoding.','roadTiling':'Only non-overlapping x%128=0,y%128=0 patches; no global junction merging.'},{'registrationChecks':checks,'excludedMalformedOutputs':skips,'selectionFocus':focus})
-    # Rank actual parseable predictions, counting road polylines rather than network containers.
-    density={}
-    for region in sorted(regions):
-        counts={}
-        for cls in ['Building','WaterBody','Road']:
-            count=0
-            for _,path,row in entries[cls].get(region,[]):
-                if cls=='Road':
-                    _,x,y=map(int,Path(path).stem.split('_patch_')[1].split('_'))
-                    if x%128 or y%128:continue
-                try:
-                    features=parsed(row['predict'])
-                    count+=sum(len(f['geometry']['coordinates']) if cls=='Road' else 1 for f in features)
-                except (ValueError,KeyError,TypeError):continue
-            counts[cls]=count
-        if counts['Building']>=10 and counts['WaterBody']>=1 and counts['Road']>=4 and len(dets.get(region,[]))==4:
-            density[region]=counts
-    out=[];selected=set();rejected=[]
-    for focus in ['original','original','Building','WaterBody','Road','Building','WaterBody','Road','Building','WaterBody']:
-        candidates=[['102','117'][len(out)]] if focus=='original' else sorted(density,key=lambda r:(-density[r][focus],-sum(density[r].values()),int(r)))
-        for region in candidates:
-            if region in selected:continue
-            try:
-                meta=build_region(region,len(out)+1,focus)
-            except (ValueError,KeyError,AssertionError) as e:
-                selected.add(region);rejected.append({'region':region,'reason':str(e)});print('Skip multi',region,str(e)[:100],flush=True);continue
-            out.append(meta);selected.add(region);break
-        else:raise RuntimeError(f'Could not select enough validated {focus} scenes')
-    write(HERE/'artifacts/case-selection.json',{'selection':'Preserve original scenes; add three building-rich, three water-rich and two road-rich regions, ranked by real predicted object/polyline counts. All multi scenes contain all three classes.','selected':[{'id':m['id'],'region':m['source']['image'],'focus':m['selectionFocus'],'counts':m['counts']} for m in out],'rejected':rejected})
+    selected = read(HERE/'scripts/selected_scenes.json')
+    out = []
+    for index, item in enumerate(selected, 1):
+        if item['region'] not in regions:
+            raise ValueError(f"Requested region missing from source COCO: {item}")
+        meta = build_region(item['region'], index, 'user-specified')
+        meta['source']['requestedImage'] = item['requestedImage']
+        write(OUT/meta['id']/'metadata.json', meta)
+        out.append(meta)
+    write(HERE/'artifacts/case-selection.json', {'selection':'Exact user-specified regions, in requested order; no automatic substitution.', 'selected':out})
     return out
 
 if __name__=='__main__':
     OUT.mkdir(parents=True,exist_ok=True)
-    meta=multicategory()+single_polygons('building')+single_polygons('water')+roads()
-    assert len(meta)==25
+    existing=read(OUT/'index.json') if (OUT/'index.json').exists() else []
+    singles=[m for m in existing if m['mode']=='single-category']
+    if len(singles)!=15:
+        singles=single_polygons('building')+single_polygons('water')+roads()
+    meta=multicategory()+singles
+    assert len(meta)==20
     write(OUT/'index.json',meta)
     if '--prepare-only' not in __import__('sys').argv:
         from stitch_demo_roads import main as stitch_roads

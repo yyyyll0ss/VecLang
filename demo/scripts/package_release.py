@@ -12,7 +12,7 @@ with zipfile.ZipFile(art/'VecLang-demo-site.zip','w',zipfile.ZIP_DEFLATED) as z:
  for p in sorted((ROOT/'dist').rglob('*')):
   if p.is_file():z.write(p,p.relative_to(ROOT/'dist'))
 with zipfile.ZipFile(art/'VecLang-demo-source.zip','w',zipfile.ZIP_DEFLATED) as z:
- for name in ['src','scripts','tests','public','.gitignore','artifacts/desktop-preview.png','artifacts/road-topology-preview.png','artifacts/single-case-preservation.json','artifacts/road_stitching','artifacts/case-selection.json','artifacts/wide-preview.png','artifacts/data-validation.json','artifacts/browser-validation.json','artifacts/browser-offline-validation.json','index.html','package.json','package-lock.json','README.md','VecLang_Demo.ipynb','VecLang-Standalone.html']:
+ for name in ['src','scripts','tests','public','.gitignore','artifacts/desktop-preview.png','artifacts/road-topology-preview.png','artifacts/single-case-preservation.json','artifacts/road_stitching_junction','artifacts/case-selection.json','artifacts/wide-preview.png','artifacts/data-validation.json','artifacts/browser-validation.json','artifacts/browser-offline-validation.json','index.html','package.json','package-lock.json','README.md','VecLang_Demo.ipynb','VecLang-Standalone.html']:
   p=ROOT/name
   for f in ([p] if p.is_file() else sorted(p.rglob('*'))):
    if f.is_file() and '__pycache__' not in f.parts:z.write(f,Path('VecLang-demo')/f.relative_to(ROOT))
