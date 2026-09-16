@@ -3,6 +3,10 @@
 本目录只保存可上传 GitHub 的推理入口、任务配置和复现说明。测试数据、模型权重、
 完整预测结果以及运行缓存均不放在这里。
 
+本文说明原始推理 CLI。`object_detection` 与 `attributes_generation` 使用各自已发布
+的测试 manifest；`--task all` 只是依次运行这两个独立 benchmark，不包含检测后
+裁剪。完整执行顺序以 [`../REPRODUCE.md`](../REPRODUCE.md) 为准。
+
 ## 文件说明
 
 - `run_inference.sh`：推荐入口，选择 Python 环境并自动发现本地模型；
@@ -10,6 +14,7 @@
 - `configs/datasets.yaml`：测试集名称、任务类型、样本数和相对路径；
 - `configs/object_detection.yaml`：目标检测生成参数；
 - `configs/attributes_generation.yaml`：矢量属性生成参数；
+- `inference_cut/`：检测结果转 COCO、单实例裁剪和后续属性推理；
 - `SMOKE_TEST.md`：六卡小样例推理验证记录。
 
 脚本不会改写 `../dataset/test`。每次运行会创建独立目录，保存解析后的配置、
@@ -83,7 +88,7 @@ bash run_inference.sh \
 conda activate Qwen3VL-New
 
 bash run_inference.sh --list-datasets
-bash run_inference.sh --task all --dry-run
+bash run_inference.sh --task all --dry-run  # 两个独立 benchmark
 bash run_inference.sh --task object_detection --dry-run --check-all-images
 ```
 
@@ -94,7 +99,7 @@ bash run_inference.sh --task object_detection --dry-run --check-all-images
 ## 正式推理
 
 ```bash
-# 两类任务依次运行，使用当前可见 GPU
+# 两个独立 benchmark 依次运行，使用当前可见 GPU
 bash run_inference.sh --task all
 
 # 仅运行目标检测并指定 4 张 GPU
@@ -130,3 +135,16 @@ VECLANG_PYTHON=/path/to/Qwen3VL-New/bin/python \
 LLAMAFACTORY_CLI=/path/to/Qwen3VL-New/bin/llamafactory-cli \
 bash run_inference.sh --list-datasets
 ```
+
+## 检测后实例裁剪
+
+若需要执行完整的渐进式流程，目标检测结束后还应将检测实例裁成单实例图像，再
+运行属性推理。该步骤集中保存在 `inference_cut/`，不会改变上面的原有推理入口。
+
+```bash
+bash inference_cut/run_pipeline.sh --list-profiles
+```
+
+两阶段的完整命令只在 [`../REPRODUCE.md`](../REPRODUCE.md#5-progressive-detection-to-attribute-inference)
+维护；profile、`--prepare-only`、非默认数据路径和输出目录见
+[`inference_cut/README.md`](inference_cut/README.md)。

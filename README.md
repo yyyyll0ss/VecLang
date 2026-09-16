@@ -116,9 +116,22 @@ bash inference/run_inference.sh \
   --max-samples 9 --gpus 0
 ```
 
-For the full test run, use `bash inference/run_inference.sh --task all --gpus 0,1,2,3`, adjusting GPU IDs to your machine. Predictions are saved outside the repository in `../VecLang_outputs/<timestamp>/<task>/predictions_by_dataset/`.
+For the full standalone benchmark run, use `bash inference/run_inference.sh --task all --gpus 0,1,2,3`, adjusting GPU IDs to your machine. Here `all` runs detection and vector attributes independently on their released manifests; it does not crop detected instances. Predictions are saved outside the repository in `../VecLang_outputs/<timestamp>/<task>/predictions_by_dataset/`.
 
-[Reproduction guide](REPRODUCE.md) · [Dependencies](ENVIRONMENT.md) · [Inference options](inference/README.md) · [Evaluation](eval_tools/README.md)
+For progressive detection-to-vector inference, continue from the split object-detection JSONL with `inference/inference_cut/run_pipeline.sh`. It converts detections to COCO, crops each detected instance, builds the attribute manifest, and launches attribute inference. See the [instance-crop guide](inference/inference_cut/README.md).
+
+## Documentation
+
+| Document | Scope |
+|---|---|
+| [REPRODUCE.md](REPRODUCE.md) | Authoritative end-to-end reproduction order, including the progressive workflow |
+| [ENVIRONMENT.md](ENVIRONMENT.md) | Installation, tested versions, CUDA/GPU and optional dependencies |
+| [inference/README.md](inference/README.md) | Original inference CLI and standalone benchmark modes |
+| [inference/inference_cut/README.md](inference/inference_cut/README.md) | Detection-to-COCO, instance cropping and attribute-stage options |
+| [eval_tools/README.md](eval_tools/README.md) | Evaluation entry points and task-specific guides |
+| [demo/README.md](demo/README.md) | Offline/online demo usage, development and data provenance |
+
+When commands overlap, follow `REPRODUCE.md` for execution order and the relevant subdirectory README for command-specific options.
 
 ## Citation
 

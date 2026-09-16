@@ -1,0 +1,55 @@
+# Paths are resolved relative to this file.
+dataset_root: ../../../dataset/test
+attribute_config: ../../configs/attributes_generation.yaml
+
+crop:
+  model_coordinate_max: 1000
+  scale_factor: 1.3
+  output_size: 256
+  score_threshold: 0.0
+  min_area: 0.0
+
+profiles:
+  whu_building:
+    detection_manifest: object_detection/WHU_test_patches_512.json
+    image_dir: object_detection/WHU_test_patches_512
+    prompt_manifest: attributes_generation/WHU_building_instance_test_0129.json
+    output_dataset: WHU_detected_building_attributes
+    category_id: 1
+    category_name: building
+    category_aliases: [building, buildings]
+    class_code: 1
+    property_class: Building
+
+  wb_waterbody:
+    detection_manifest: object_detection/WB_test_patches_512.json
+    image_dir: object_detection/WB_test_patches_512
+    prompt_manifest: attributes_generation/WB_WaterBody_instance_test_0323.json
+    output_dataset: WB_detected_waterbody_attributes
+    category_id: 1
+    category_name: waterbody
+    category_aliases: [water, waterbody, water_body, waterbodies]
+    class_code: 1
+    property_class: WaterBody
+
+  irsamap_building:
+    detection_manifest: object_detection/IRSAMap_test_patches_512.json
+    image_dir: object_detection/IRSAMap_test_patches_512
+    prompt_manifest: attributes_generation/IRSAMap_Building_instance_test_sft.json
+    output_dataset: IRSAMap_detected_building_attributes
+    category_id: 1
+    category_name: building
+    category_aliases: [building, buildings]
+    class_code: 31
+    property_class: Building
+
+  irsamap_waterbody:
+    detection_manifest: object_detection/IRSAMap_test_patches_512.json
+    image_dir: object_detection/IRSAMap_test_patches_512
+    prompt_manifest: attributes_generation/IRSAMap_WaterBody_instance_test_sft.json
+    output_dataset: IRSAMap_detected_waterbody_attributes
+    category_id: 2
+    category_name: waterbody
+    category_aliases: [water, waterbody, water_body, waterbodies]
+    class_code: 21
+    property_class: WaterBody

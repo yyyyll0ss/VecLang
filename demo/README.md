@@ -4,6 +4,10 @@
 
 用于论文展示的离线交互 Demo：**Image ↔ Structured Vector Language ↔ Vector Map**。默认展示 IRSAMap 多类别场景，所有首页案例均来自已有模型推理结果。无需模型权重、GPU、数据库、CDN 或推理服务。
 
+本文只说明预计算 Demo 的使用、构建和数据来源，不是在线模型推理说明。模型复现
+与检测后裁剪流程分别见 [`../REPRODUCE.md`](../REPRODUCE.md) 和
+[`../inference/inference_cut/README.md`](../inference/inference_cut/README.md)。
+
 ![Desktop preview](artifacts/desktop-preview.png)
 
 ## 最方便的打开与上传方式

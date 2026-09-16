@@ -2,6 +2,11 @@
 
 测试日期：2026-09-01（Asia/Shanghai）
 
+范围说明：本文记录的是目标检测与预构建属性 manifest 的两组独立 smoke test，
+不是检测框裁剪后的级联测试。渐进式流程及其验证方法见
+[`inference_cut/README.md`](inference_cut/README.md)；正式复现顺序见
+[`../REPRODUCE.md`](../REPRODUCE.md)。
+
 ## 结论
 
 `Qwen3-VL-4B-VecLang-0502` 权重可以在 `Qwen3VL-New` 环境中通过 LLaMA-Factory 真正执行图像推理，不是仅完成配置或模型加载。目标检测与矢量属性生成均已在 6 张 RTX 3090 上完成生成并写出预测结果。

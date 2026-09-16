@@ -10,6 +10,13 @@
 
 将实例裁剪级 JSONL 预测还原到 patch 坐标，输出 COCO detection list 和 `*_full.json`。
 
+若预测来自 `inference/inference_cut`，分别使用
+`<run>/attribute_inference/generated_predictions.jsonl` 和
+`<run>/instance_crops/annotations/`；`--image-dir` 指向原始检测 patch 影像，不是
+裁出的 256×256 实例图。完整路径对应表见[评估总览](../README.md#数据约定)。
+这里的 `--inference-file` 是第二阶段水体矢量属性 JSONL，不是第一阶段 bbox 检测
+JSONL。
+
 ```bash
 python 1.convert_to_coco_format_geojson_instance_patch.py \
   --inference-file path/to/predictions.jsonl \

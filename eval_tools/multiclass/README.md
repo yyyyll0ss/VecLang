@@ -37,6 +37,12 @@ python -m pip install -r requirements.txt
 - 道路必须使用真实推理 patch 索引，文件名支持 `region_100_patch_0_0_0.png` 或 `100_patch_0_0_0.png`。末两项是源图偏移；默认原始 crop 128、模型 patch 256、stride 64。不能用建筑/水体的 512 patch GT 替代道路索引。
 - 道路图采用 `(row, col)` 像素坐标；GT GeoJSON 输入为 `(x, y)` 像素坐标，不是经纬度。GT 转换默认将顶点限制在 `[0,1024]` 并取整，保持原实现；其他尺寸应指定 `--clip-max` 或 `--no-clip`。
 
+若建筑或水体预测来自 `inference/inference_cut`，`--inference-file` 使用
+`<run>/attribute_inference/generated_predictions.jsonl`，`--anno-dir` 使用
+`<run>/instance_crops/annotations/`，`--manifest` 使用
+`<run>/instance_crops/attribute_manifest.json`；`--image-dir` 仍是原始 IRSAMap
+检测 patch 目录。动态 manifest 的 assistant 字段不是真值，不能作为 GT。
+
 ## 1. 建筑、水体
 
 以下命令从本目录运行，路径均为示例，替换为自己的真实数据路径。
