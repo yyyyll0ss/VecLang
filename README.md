@@ -10,6 +10,7 @@
   <a href="#results">Results</a> |
   <a href="#todo">Downloads</a> |
   <a href="#quick-start">Quick Start</a> |
+  <a href="#training">Training</a> |
   <a href="#citation">Citation</a>
 </p>
 
@@ -94,6 +95,7 @@ VecLang can also generalize to high-resolution scenes outside the benchmark. The
 
 - [x] Paper: [Vector Map as Language: Toward Unified Remote Sensing Vector Mapping](https://arxiv.org/abs/2606.10701)
 - [x] Code: [Inference](inference/) · [Evaluation tools](eval_tools/) · [Demo](demo/)
+- [x] Training information: [SFT / RL guide and V9 reward function](training/)
 - [x] Weights: [VecLang-4B on Hugging Face](https://huggingface.co/yyyllll/VecLang-4B)
 - [x] Dataset: [VecLang data on Baidu Netdisk](https://pan.baidu.com/s/1b9clAjJT_YWdQBrTR99MKg?pwd=paqs) · Extraction code: `paqs`
 
@@ -120,12 +122,17 @@ For the full standalone benchmark run, use `bash inference/run_inference.sh --ta
 
 For progressive detection-to-vector inference, continue from the split object-detection JSONL with `inference/inference_cut/run_pipeline.sh`. It converts detections to COCO, crops each detected instance, builds the attribute manifest, and launches attribute inference. See the [instance-crop guide](inference/inference_cut/README.md).
 
+## Training
+
+VecLang uses [LLaMA-Factory](https://github.com/hiyouga/LlamaFactory) for supervised fine-tuning (SFT) and [ms-swift](https://github.com/modelscope/ms-swift) for reinforcement learning (RL). The released SFT data shows the multimodal `messages` and `images` format; the RL reward plugin is available as [My_Reward_v9.py](training/My_Reward_v9.py). See the [training guide](training/README.md) for the data fields, reward names, and ms-swift plugin arguments.
+
 ## Documentation
 
 | Document | Scope |
 |---|---|
 | [REPRODUCE.md](REPRODUCE.md) | Authoritative end-to-end reproduction order, including the progressive workflow |
 | [ENVIRONMENT.md](ENVIRONMENT.md) | Installation, tested versions, CUDA/GPU and optional dependencies |
+| [training/README.md](training/README.md) | SFT and RL frameworks, data formats and custom reward usage |
 | [inference/README.md](inference/README.md) | Original inference CLI and standalone benchmark modes |
 | [inference/inference_cut/README.md](inference/inference_cut/README.md) | Detection-to-COCO, instance cropping and attribute-stage options |
 | [eval_tools/README.md](eval_tools/README.md) | Evaluation entry points and task-specific guides |

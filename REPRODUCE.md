@@ -1,6 +1,6 @@
 # Reproducing VecLang inference and evaluation
 
-This release provides the merged VecLang-4B checkpoint, inference configurations, and evaluation code. This file is the authoritative execution order for checkpoint inference, progressive detection-to-attribute inference, and downstream evaluation; subdirectory READMEs document task-specific options. Training recipes are not included in this release.
+This release provides the merged VecLang-4B checkpoint, inference configurations, evaluation code, and [training information with the V9 reward function](training/README.md). This file is the authoritative execution order for checkpoint inference, progressive detection-to-attribute inference, and downstream evaluation; subdirectory READMEs document task-specific options. Complete training configurations are not included in this release.
 
 ## 1. Environment
 
