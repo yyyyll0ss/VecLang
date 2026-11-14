@@ -1,4 +1,4 @@
-# TPAMI2026 VecLang: Vector Map as Language
+# [TPAMI2026] VecLang: Vector Map as Language
 
 <p align="center">
   <b>Vector Map as Language: Toward Unified Remote Sensing Vector Mapping</b>
