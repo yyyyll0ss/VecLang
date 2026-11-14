@@ -1,4 +1,4 @@
-# VecLang: Vector Map as Language
+# TPAMI2026 VecLang: Vector Map as Language
 
 <p align="center">
   <b>Vector Map as Language: Toward Unified Remote Sensing Vector Mapping</b>
@@ -148,9 +148,10 @@ If you find this project useful, please consider citing our work:
 @article{yan2026vectormaplanguageunified,
   title={Vector Map as Language: Toward Unified Remote Sensing Vector Mapping},
   author={Yan, Yinglong and Yang, Yunkai and Wang, Haoyi and Fu, Wei and Wu, Linshan and Pan, Honghu and Xia, Shaobo and Zhang, Shanghang and Chen, Hao and Fang, Leyuan},
-  journal={arXiv preprint arXiv:2606.10701},
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
   year={2026},
   url={https://arxiv.org/abs/2606.10701}
+  doi={10.1109/TPAMI.2026.3752281}
 }
 ```
 
